@@ -23,16 +23,18 @@ soma jogadas frame = jogadas !! frame + jogadas !! (frame + 1)
 bonusStrike :: [Int] -> Int -> Int
 bonusStrike jogadas frame
     | frame == 9 = jogadas !! 10 + jogadas !! 11
-    | eStrike jogadas (frame + 1) = 10 + jogadas !! (frame + 2)
+    | eStrike jogadas frame = 10 + jogadas !! (frame + 1) + bonusStrike jogadas (frame + 1)
     | otherwise = soma jogadas (frame + 1)
 
 -- Calcula o bônus de um spare
 bonusSpare :: [Int] -> Int -> Int
-bonusSpare jogadas frame = jogadas !! (frame + 2)
+bonusSpare jogadas frame
+    | frame == 9 = jogadas !! 10 + jogadas !! 11
+    | otherwise = jogadas !! (frame + 2)
 
 -- Calcula a pontuação final
 pontuacaoFinal :: [Int] -> Int
-pontuacaoFinal jogadas = pontuacaoFrame jogadas 0 + pontuacaoFrame jogadas 2 + pontuacaoFrame jogadas 4 + pontuacaoFrame jogadas 6 + pontuacaoFrame jogadas 8 + jogadas !! 10 + jogadas !! 11
+pontuacaoFinal jogadas = sum [pontuacaoFrame jogadas frame | frame <- [0..9]]
 
 -- Função principal para ler a sequência de pinos e imprimir a pontuação final
 main :: IO ()
