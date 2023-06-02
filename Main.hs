@@ -1,11 +1,11 @@
-pontuacaoTotalAux :: [Int] -> Int -> Int -> Int
-pontuacaoTotalAux [] _ pontuacao = pontuacao
-pontuacaoTotalAux (x:y:z:resto) rodada pontuacao
-    | rodada > 10 = pontuacao
-    | ehStrike x = pontuacaoTotalAux (y:z:resto) (rodada + 1) (pontuacao + x + y + z)
-    | ehSpare x y = pontuacaoTotalAux (z:resto) (rodada + 1) (pontuacao + x + y + z)
-    | otherwise = pontuacaoTotalAux (z:resto) (rodada + 1) (pontuacao + x + y)
-pontuacaoTotalAux _ _ pontuacao = pontuacao
+totalPontos :: [Int] -> Int -> Int -> Int
+totalPontos [] _ pontuacao = pontuacao
+totalPontos (x : y : z : resto) frame pontuacao
+  | frame > 10 = pontuacao
+  | ehStrike x = totalPontos (y : z : resto) (frame + 1) (pontuacao + x + y + z)
+  | ehSpare x y = totalPontos (z : resto) (frame + 1) (pontuacao + x + y + z)
+  | otherwise = totalPontos (z : resto) (frame + 1) (pontuacao + x + y)
+totalPontos _ _ pontuacao = pontuacao
 
 -- Verifica se o frame é um strike
 ehStrike :: Int -> Bool
@@ -17,7 +17,25 @@ ehSpare x y = x + y == 10
 
 -- Calcula a pontuação final
 pontuacaoFinal :: [Int] -> Int
-pontuacaoFinal jogadas = pontuacaoTotalAux jogadas 1 0
+pontuacaoFinal jogadas = totalPontos jogadas 1 0
+
+
+imprimeFrame :: [Int] -> String
+imprimeFrame [x, y] -- Frames com apenas 2 jogadas
+  | x + y == 10 = show x ++ " / |"
+  | otherwise = show x ++ " " ++ show y ++ " |"
+imprimeFrame [x, y, z] -- Ultimo frame, com 3 jogadas
+  | x + y == 10 = show x ++ " / " ++ show z ++ " |"
+  | x == 10 && y + z == 10 = "X " ++ show y ++ " / |"
+  | x + y == 10 && z == 10 = show x ++ " / X |"
+  | x + y + z == 30 = "X X X |"
+  | otherwise = show x ++ " " ++ show y ++ " " ++ show z ++ "|"
+imprimeFrame (x : y : z : resto)
+  | x == 10 = "X _ | " ++ imprimeFrame (y : z : resto)
+  | x + y == 10 = show x ++ " / | " ++ imprimeFrame (z : resto)
+  | otherwise = show x ++ " " ++ show y ++ " | " ++ imprimeFrame (z : resto)
+imprimeFrame _ = ""
+
 
 -- Função principal para ler a sequência de pinos e imprimir a pontuação final
 main :: IO ()
@@ -26,7 +44,4 @@ main = do
   entrada <- getLine
   let pinos = map read (words entrada) :: [Int]
   let pontos = pontuacaoFinal pinos
-  putStrLn ("Sequência de pinos derrubados: " ++ show pinos)
-  putStrLn $ "Pontuação final do jogo: " ++ show pontos
-
--- show: imprime itens como um String
+  putStrLn $ imprimeFrame pinos ++ " " ++ show pontos
