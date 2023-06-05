@@ -6,7 +6,8 @@ totalPontos (x : y : z : pontos_aux) frame pontos_frame
   | ehStrike x = totalPontos (y : z : pontos_aux) (frame + 1) (pontos_frame + x + y + z)
   | ehSpare x y = totalPontos (z : pontos_aux) (frame + 1) (pontos_frame + x + y + z)
   | otherwise = totalPontos (z : pontos_aux) (frame + 1) (pontos_frame + x + y)
-totalPontos _ _ pontos_frame = pontos_frame
+  totalPontos [x] 10 pontos_frame = pontos_frame + x
+  totalPontos [x, y] 10 pontos_frame = pontos_frame + x + y
 
 -- Verifica se o frame tem um strike
 ehStrike :: Int -> Bool
