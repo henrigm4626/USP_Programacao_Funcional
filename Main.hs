@@ -8,6 +8,7 @@ totalPontos (x : y : z : pontos_aux) frame pontos_frame
   | otherwise = totalPontos (z : pontos_aux) (frame + 1) (pontos_frame + x + y)
 totalPontos [x] 10 pontos_frame = pontos_frame + x
 totalPontos [x, y] 10 pontos_frame = pontos_frame + x + y
+totalPontos _ _ pontos_frame = pontos_frame
 
 -- Verifica se o frame tem um strike
 ehStrike :: Int -> Bool
