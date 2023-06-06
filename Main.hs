@@ -28,10 +28,10 @@ imprimeFrame [x, y] -- Frames padrão, com apenas 2 jogadas
   | x + y == 10 = show x ++ " / |"
   | otherwise = show x ++ " " ++ show y ++ " |"
 imprimeFrame [x, y, z] -- Avaliando strikes e spares seguidos
+  | x == 10 && y + z == 10 = "X " ++ show y ++ " / |"
+  | x + y == 10 && z == 10 = show x ++ " / X |"
   | x + y == 10 = show x ++ " / " ++ show z ++ " |"
   | x + y + z == 30 = "X X X |"
-  | x + y == 10 && z == 10 = show x ++ " / X |"
-  | x == 10 && y + z == 10 = "X " ++ show y ++ " / |"
   | otherwise = show x ++ " " ++ show y ++ " " ++ show z ++ "|" -- Caso base
 imprimeFrame (x : y : z : pontos_aux) -- Considerando a jogada bônus
   | x == 10 = "X _ | " ++ imprimeFrame (y : z : pontos_aux)
