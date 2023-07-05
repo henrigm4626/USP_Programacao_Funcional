@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 class Main {
 	//classe Info_paises
@@ -74,7 +75,7 @@ class Main {
 					active = Integer.parseInt(valores[4]);
 					return new Info_paises(name, confirmed, deaths, recovered, active);
 				})
-				.toList();
+				.collect(Collectors.toList());
 		
 		//Primeira saida
 		int res_1; //(A soma de "Active" de todos os países em que "Confirmed" é maior ou igual a n1)
@@ -94,7 +95,7 @@ class Main {
                 		.reversed())
                 .limit(n2)
                 .map(Info_paises::getName)
-                .toList();
+                .collect(Collectors.toList());
 		
 		//recolhe o deaths dos n3 paises com menores valores de confirmed (dentre paises_maiores_active) e mostra na tela
         paises
