@@ -1,17 +1,17 @@
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
-import java.util.stream.Collectors;
 
+//versao nao funcional (imperativa)
 class Main {
+	
 	//classe Info_paises
 	//em um projeto normal, estaria fora da classe main
-	
 	public static class Info_paises{
 		//atributos (seguindo o csv)
 		String name;
@@ -61,62 +61,52 @@ class Main {
 		int n4 = Integer.parseInt(ns[3]);
 		
 		//utilizando csv
-		Stream<String> linhas_csv = Files.lines(Paths.get("dados.csv"));
-		
-		//recolhendo uma lista de paises
-		List<Info_paises> paises = linhas_csv
-				.map(linha -> {
-					String[] valores = linha.split(",");//separa os valores pelas virgulas (por ser csv)
-					String name = valores[0];
-					int confirmed, deaths, recovered, active;
-					confirmed = Integer.parseInt(valores[1]);
-					deaths = Integer.parseInt(valores[2]);
-					recovered = Integer.parseInt(valores[3]);
-					active = Integer.parseInt(valores[4]);
-					return new Info_paises(name, confirmed, deaths, recovered, active);
-				})
-				.collect(Collectors.toList());
-		
-		//Primeira saida
-		int res_1; //(A soma de "Active" de todos os países em que "Confirmed" é maior ou igual a n1)
-		res_1 = paises
-				.stream()
-				.filter(pais -> pais.getConfirmed() >= n1)//filtra paises cujo Confirmed >= n1
-				.mapToInt(Info_paises::getActive) //pega o valor de Active dos paises que passaram pelo filtro
-				.sum(); //soma os valores
-		System.out.println(res_1);
-		
-		
-		//Segunda saida
-		//Dentre os n2 países com maiores valores de "Active", o "Deaths" dos n3 países com menores valores de "Confirmed")
-		//lista dos n2 paises com maiores active
-		List<String> paises_maiores_active = paises.stream()
-                .sorted(Comparator.comparingInt(Info_paises::getActive)
-                		.reversed())
-                .limit(n2)
-                .map(Info_paises::getName)
-                .collect(Collectors.toList());
-		
-		//recolhe o deaths dos n3 paises com menores valores de confirmed (dentre paises_maiores_active) e mostra na tela
-        paises
-        .stream()
-        .filter(pais -> paises_maiores_active.contains(pais.getName()))
-        .sorted(Comparator.comparingInt(Info_paises::getConfirmed))
-        .limit(n3)
-        .map(Info_paises::getDeaths)
-        .forEach(deaths -> System.out.println(deaths + " "));
+		BufferedReader leitor_2 = new BufferedReader(new FileReader("dados.csv"));
+		List<String[]> linhas_csv = new ArrayList<>();
+		String linha_aux;
+        while ((linha_aux = leitor_2.readLine()) != null) {
+            String[] colunas = linha_aux.split(",");
+            linhas_csv.add(colunas);
+        }
+        String[][] tabela_csv = new String[linhas_csv.size()][];
+        for (int i = 0; i < linhas_csv.size(); i++) {
+            tabela_csv[i] = linhas_csv.get(i);
+        }
+        
+        //passando para um array de paises
+        Info_paises [] paises = new Info_paises[tabela_csv.length];;
+        for(int i = 0; i < tabela_csv.length; i++) {
+        	paises[i] = new Info_paises(tabela_csv[i][0],Integer.parseInt(tabela_csv[i][1]), Integer.parseInt(tabela_csv[i][2]), Integer.parseInt(tabela_csv[i][3]), Integer.parseInt(tabela_csv[i][4]));
+        }
+        
+        //primeira saida
+        //(A soma de "Active" de todos os países em que "Confirmed" é maior ou igual a n1)
+        int res_1 = 0;
+        //percorrendo todos os paises
+        for(Main.Info_paises pais : paises) {
+        	if(pais.getConfirmed() >= n1) {
+        		res_1 += pais.getActive();
+        	}
+        }
+        System.out.println(res_1);
+        
+        //segunda saida
+        //Dentre os n2 países com maiores valores de "Active", o "Deaths" dos n3 países com menores valores de "Confirmed")
+        Arrays.sort(paises, Comparator.comparingInt(pais -> pais.getActive()));
+        Info_paises[] paises_sorted_1 = Arrays.copyOfRange(paises, paises.length - n2, paises.length);
+        Arrays.sort(paises_sorted_1, Comparator.comparingInt(pais -> pais.getConfirmed()));
+        for(int i = 0; i < n3 && i < paises_sorted_1.length; i++) {
+        	System.out.println(paises_sorted_1[i].getDeaths());
+        }
         
         //terceira saida
         //Os n4 países com os maiores valores de "Confirmed". Os nomes devem estar em ordem alfabética.
-        paises
-        .stream()
-        .sorted(Comparator.comparingInt(Info_paises::getConfirmed)
-        		.reversed()
-        		.thenComparing(Info_paises::getName))
-        .limit(n4)
-        .map(Info_paises::getName)
-        .sorted()
-        .forEach(pais -> System.out.println(pais + " "));
-        		
+        Arrays.sort(paises, Comparator.comparingInt(pais -> pais.getConfirmed()));
+        Info_paises[] paises_sorted_2 = Arrays.copyOfRange(paises, paises.length - n4, paises.length);
+        Arrays.sort(paises_sorted_2, Comparator.comparing(pais -> pais.getName()));
+        
+        for(int i = 0; i < paises_sorted_2.length; i++) {
+        	System.out.println(paises_sorted_2[i].getName());
+        }
 	}
 }
