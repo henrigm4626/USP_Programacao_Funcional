@@ -98,27 +98,27 @@ class Main {
                 .collect(Collectors.toList());
 		
 		//recolhe o deaths dos n3 paises com menores valores de confirmed (dentre paises_maiores_active) e mostra na tela
-        paises
-        .stream()
-        .filter(pais -> paises_maiores_active.contains(pais.getName()))
-        .sorted(Comparator.comparingInt(Info_paises::getConfirmed))
-        .limit(n3)
-        .map(Info_paises::getDeaths)
-        .forEach(deaths -> System.out.println(deaths + " "));
-        
-        //terceira saida
-        //Os n4 países com os maiores valores de "Confirmed". Os nomes devem estar em ordem alfabética.
-        paises
-        .stream()
-        .sorted(Comparator.comparingInt(Info_paises::getConfirmed)
-        		.reversed()
-        		.thenComparing(Info_paises::getName))
-        .limit(n4)
-        .map(Info_paises::getName)
-        .sorted()
-        .forEach(pais -> System.out.println(pais + " "));
-        
-        linhas_csv.close();
-        		
+	        paises
+	        .stream()
+	        .filter(pais -> paises_maiores_active.contains(pais.getName()))
+	        .sorted(Comparator.comparingInt(Info_paises::getConfirmed))
+	        .limit(n3)
+	        .map(Info_paises::getDeaths)
+	        .forEach(deaths -> System.out.println(deaths + " "));
+	        
+	        //terceira saida
+	        //Os n4 países com os maiores valores de "Confirmed". Os nomes devem estar em ordem alfabética.
+	        paises
+	        .stream()
+	        .sorted(Comparator.comparingInt(Info_paises::getConfirmed)
+	        		.reversed()
+	        		.thenComparing(Info_paises::getName))
+	        .limit(n4)
+	        .map(Info_paises::getName)
+	        .sorted()
+	        .forEach(pais -> System.out.println(pais + " "));
+	        
+	        linhas_csv.close();
+	        		
 	}
 }
